@@ -3,9 +3,24 @@
     "name": "fullscreen-camera",
     "slug": "fullscreen-camera",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "landscape",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "允许 $(PRODUCT_NAME) 访问摄像头以显示实时画面",
+          "recordAudioAndroid": false
+        }
+      ],
+      [
+        "expo-status-bar",
+        {
+          "hidden": true
+        }
+      ]
+    ],
     "ios": {
       "supportsTablet": true
     },
