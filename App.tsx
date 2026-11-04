@@ -1,8 +1,49 @@
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import { getBrightnessAsync, setBrightnessAsync } from 'expo-brightness';
 import { useKeepAwake } from 'expo-keep-awake';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useRef, useState } from 'react';
 import { AppState, Pressable, StyleSheet, Text, View } from 'react-native';
+
+function ManageScreenBrightness() {
+  useEffect(() => {
+    let originalBrightness: number | null = null;
+    let isCancelled = false;
+
+    const setMinimumBrightness = async () => {
+      const brightness = await getBrightnessAsync();
+      if (isCancelled) {
+        return;
+      }
+
+      originalBrightness = brightness;
+      await setBrightnessAsync(0);
+    };
+
+    const brightnessTask = setMinimumBrightness();
+    void brightnessTask.catch((error: unknown) => {
+      console.error('Failed to set minimum screen brightness.', error);
+    });
+
+    return () => {
+      isCancelled = true;
+
+      const restoreBrightness = async () => {
+        if (originalBrightness !== null) {
+          await setBrightnessAsync(originalBrightness);
+        }
+      };
+
+      void brightnessTask
+        .then(restoreBrightness, restoreBrightness)
+        .catch((error: unknown) => {
+          console.error('Failed to restore screen brightness.', error);
+        });
+    };
+  }, []);
+
+  return null;
+}
 
 function KeepScreenAwake() {
   useKeepAwake();
@@ -39,6 +80,7 @@ export default function App() {
       <StatusBar hidden />
       {permission?.granted ? (
         <>
+          {isAppActive ? <ManageScreenBrightness /> : null}
           {isAppActive ? <KeepScreenAwake /> : null}
           <CameraView
             style={StyleSheet.absoluteFill}
