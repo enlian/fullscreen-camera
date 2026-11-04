@@ -1,7 +1,13 @@
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import { useKeepAwake } from 'expo-keep-awake';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useRef, useState } from 'react';
 import { AppState, Pressable, StyleSheet, Text, View } from 'react-native';
+
+function KeepScreenAwake() {
+  useKeepAwake();
+  return null;
+}
 
 export default function App() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -32,11 +38,14 @@ export default function App() {
     <View style={styles.container}>
       <StatusBar hidden />
       {permission?.granted ? (
-        <CameraView
-          style={StyleSheet.absoluteFill}
-          facing="back"
-          active={isAppActive}
-        />
+        <>
+          {isAppActive ? <KeepScreenAwake /> : null}
+          <CameraView
+            style={StyleSheet.absoluteFill}
+            facing="back"
+            active={isAppActive}
+          />
+        </>
       ) : (
         <View style={styles.messageContainer}>
           <Text style={styles.message}>
