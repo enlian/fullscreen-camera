@@ -3,7 +3,13 @@ import { getBrightnessAsync, setBrightnessAsync } from 'expo-brightness';
 import { useKeepAwake } from 'expo-keep-awake';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useRef, useState } from 'react';
-import { AppState, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  AppState,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 function ManageScreenBrightness() {
   useEffect(() => {
@@ -86,6 +92,7 @@ export default function App() {
             style={StyleSheet.absoluteFill}
             facing="back"
             active={isAppActive}
+            selectedLens="AVCaptureDeviceTypeBuiltInWideAngleCamera"
           />
         </>
       ) : (
