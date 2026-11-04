@@ -1,11 +1,20 @@
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useRef } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { AppState, Pressable, StyleSheet, Text, View } from 'react-native';
 
 export default function App() {
   const [permission, requestPermission] = useCameraPermissions();
+  const [isAppActive, setIsAppActive] = useState(true);
   const hasRequestedPermission = useRef(false);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (state) => {
+      setIsAppActive(state === 'active');
+    });
+
+    return () => subscription.remove();
+  }, []);
 
   useEffect(() => {
     if (
@@ -23,7 +32,11 @@ export default function App() {
     <View style={styles.container}>
       <StatusBar hidden />
       {permission?.granted ? (
-        <CameraView style={StyleSheet.absoluteFill} facing="back" />
+        <CameraView
+          style={StyleSheet.absoluteFill}
+          facing="back"
+          active={isAppActive}
+        />
       ) : (
         <View style={styles.messageContainer}>
           <Text style={styles.message}>
